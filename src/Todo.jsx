@@ -6,7 +6,9 @@ function Todo() {
 
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('');
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState([]);
+  const [edit, setEdit] = useState(false);
+  const [index,setIndex] = useState(null) // this is to set the index of the task to know which index data is need to find
 
   function handleTitleInput(e) {
     setTitle(e.target.value)
@@ -24,7 +26,7 @@ function Todo() {
     }
   }
 
-  function confirm(ind,callback,tasks) {
+  function confirm(ind, callback, tasks) {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -40,19 +42,36 @@ function Todo() {
           text: "Your file has been deleted.",
           icon: "success"
         });
-        console.log(tasks,ind)
-        callback(ind,tasks)
+        callback(ind, tasks)
       }
     });
   }
 
-  function deleteHandler(i,todoTask) {
-    console.log(i)
+  function deleteHandler(i, todoTask) {
     let newTasks = todoTask.filter((data, index) => index !== i)
     console.log(newTasks)
     setTasks(newTasks)
   }
-
+  function editHandler(index) {
+    setEdit(true)
+    setTitle(tasks[index].title)
+    setDesc(tasks[index].desc);
+    setIndex(index)
+  }
+  function saveEdited(index) {
+     let newTasks = tasks.map((data,ind) => {
+        if(ind == index){
+          data.title = title
+          data.desc = desc
+        }
+        return data
+     });
+    console.log(newTasks)
+    setTasks(newTasks);
+    setTitle('')
+    setDesc('')
+    setEdit(false)
+  }
   return (
     <>
       <div className='relative bg-zinc-800 w-full h-screen'>
@@ -69,11 +88,15 @@ function Todo() {
             value={desc}
             onChange={handleDescInput}
             type="text" />
+
+
           <button
-            onClick={addTasks}
+            onClick={() => edit ? saveEdited(index) : addTasks()}
             className='px-5 py-1 rounded-sm bg-zinc-950 font-semibold text-white'>
-            ADD
+            {edit ? 'SAVE' : 'ADD'}
           </button>
+
+
         </div>
 
         <h1 className='-z-9 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-zinc-950 text-[6vw] text-center p-6 font-bold tracking-wider'>Todo list.</h1>
@@ -81,7 +104,7 @@ function Todo() {
         <div className="absolute w-full grid grid-cols-4 gap-4 px-20 z-1 mt-3">
           {tasks.map((data, ind) => {
             return (
-              <List {...data} ind={ind} confirm={confirm} deleteHandler={deleteHandler} tasks={tasks}/>
+              <List {...data} ind={ind} confirm={confirm} deleteHandler={deleteHandler} tasks={tasks} edit={editHandler} />
               // <div key={ind} className='w-60 h-72 rounded-[20px] bg-zinc-900 overflow-hidden'>
               //   <h2 className='px-5 py-3 text-xl font-semibold uppercase'>{data.title}</h2>
               //   <div className='px-4 w-full h-48 overflow-auto'>
