@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HiTrash } from "react-icons/hi2";
-import { FaEdit, FaLeaf } from "react-icons/fa";
+import { FaEdit} from "react-icons/fa";
 import {v4 as uuid} from 'uuid'
-import List from './components/List';
 import Swal from 'sweetalert2'
 function Todo() {
 
@@ -23,11 +22,11 @@ function Todo() {
     let trimmedTitle = title.trim().length > 0
     let trimmedDesc = desc.trim().length > 0
     if (trimmedTitle && trimmedDesc) {
+      // setTasks(tasks.push({id:uuid(), title, desc, isCompleted: false }))
       setTasks([...tasks, {id:uuid(), title, desc, isCompleted: false }])
       setTitle('')
       setDesc('')
     }
-    console.log(tasks)
   }
 
   function confirm(id) {
@@ -108,15 +107,19 @@ function Todo() {
             className='px-5 py-1 rounded-sm bg-zinc-950 font-semibold text-white'>
             {edit ? 'SAVE' : 'ADD'}
           </button>
+          <div className=''>
           
+          <input type="checkbox" onChange={() => setShowFinished(!showFinished)} checked={showFinished} /> show finished
+          </div>
+ 
         </div>
 
         <h1 className='-z-9 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-zinc-950 text-[6vw] text-center p-6 font-bold tracking-wider'>Todo list.</h1>
 
-        <div className="absolute w-full grid grid-cols-4 gap-4 px-20 z-1 mt-5">
+        <div className="absolute w-full grid grid-cols-4 gap-4 px-20 z-1 mt-8">
 
           {tasks.map((data, ind) => {
-            return (
+            return (showFinished || !data.isCompleted) && (
               <div key={data.id} className='w-60 h-72 rounded-[20px] bg-zinc-900 overflow-hidden'>
                 <h2 className={`px-5 py-3 text-xl font-semibold uppercase  ${data.isCompleted ? "line-through" : ''}`}>{data.title}</h2>
                 <div className='px-4  w-full h-48 overflow-auto'>
@@ -126,7 +129,7 @@ function Todo() {
                 </div>
                 <footer className='bg-sky-600/70 w-100 h-auto flex px-5 py-3.5 justify-between items-center'>
 
-                  <input onChange={() => copmletedTaskHandler(ind)} type="checkbox" />
+                  <input defaultChecked={data.isCompleted} type="checkbox" onChange={() => copmletedTaskHandler(ind)} />
                   <button onClick={() => editHandler(ind)}>
                     <FaEdit />
                   </button>
