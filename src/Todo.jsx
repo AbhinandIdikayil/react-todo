@@ -141,7 +141,6 @@ function Todo() {
               </div>
             )
 
-            {/* <List {...data} ind={ind} confirm={confirm} deleteHandler={deleteHandler} tasks={tasks} edit={editHandler} /> */ }
 
           })}
         </div>
